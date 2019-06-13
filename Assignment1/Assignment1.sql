@@ -11,6 +11,7 @@ from employees
 where (to_char(hire_date, 'MM') = 05 or to_char(hire_date, 'MM') = 11)
 and to_char(hire_date, 'YYYY') not in ('1994', '1995');
 
+
 /* List the employee number, full name, job and the modified salary for all employees whose monthly earning (without this increase) is outside the 
 range $6,000 – $11,000  and who are employed as Vice Presidents or Managers (President is not counted here). You should use Wild Card characters for this.  
 VP’s will get 30% and managers 20% salary increase. Sort the output by the top salaries (before this increase) firstly. Heading will be like 
@@ -18,19 +19,17 @@ Employees with increased Pay The output lines should look like this sample line:
  
 Emp# 124 : Kevin Mourgos is ST_MAN and will get a new salary of $6,960 */
 
-select 'Emp# ' ||employee_id|| ' : '||''|| first_name ||' '|| last_name ||' is '|| job_id ||' and will get a new salary of $' ||''||
-case job_id when 'AD_VP' then salary * 1.30
-            when 'AC_MGR' then salary * 1.30
-            when 'SA_MAN' then salary * 1.20
-            when 'MK_MAN' then salary * 1.20
-            when 'ST_MAN' then salary * 1.20
-            else salary end "Employees with increased Pay"
+select 'Emp# ' ||employee_id|| ' : '||''|| first_name ||' '|| last_name ||' is '|| job_id ||' and will get a new salary of' ||''||
+case job_id when 'AD_VP' then to_char(salary * 1.30, '$99,999')
+            when 'AC_MGR' then to_char(salary * 1.30, '$99,999')
+            when 'MK_MAN' then to_char(salary * 1.20, '$99,999')
+            when 'ST_MAN' then to_char(salary * 1.20, '$99,999')
+            else to_char(salary,'$99,999') end "Employees with increased Pay"
 from employees
 where (salary not between 6000 and 11000) 
 and (job_id like '%VP' or job_id like '%MAN' or job_id like '%MGR')
 order by salary desc;
-
-
+                      
 
 /* Display the employee last name, salary, job title and manager# of all  employees not earning a commission OR if they work in  SALES department, 
 but only if their total monthly salary with $1000 included bonus and  commission (if  earned) is  greater  than  $15,000.   
@@ -49,7 +48,6 @@ and ((e.salary + 1000) * (1 + nvl(e.commission_pct, 0))) > 15000
 order by 2 desc;
 
 
-
 /* Display Department_id, Job_id and the Lowest salary for this combination under the alias Lowest Dept/Job Pay, but only if that Lowest Pay falls in the 
 range $6000 - $18000.  Exclude people who work as some kind of Representative job from this query and departments IT and SALES as well.           
 Sort the output according to the Department_id and then by Job_id. You MUST NOT use the Subquery method.   */
@@ -60,6 +58,7 @@ group by department_id, job_id
 having (min(salary) between 6000 and 18000)
 and (job_id not like '%REP' and department_id not in (60, 80))
 order by department_id, job_id;
+
 
 /*Display last_name, salary and job for all employees who earn more   than all lowest paid employees per department outside the US locations.           
 Exclude President and Vice Presidents from this query.           
